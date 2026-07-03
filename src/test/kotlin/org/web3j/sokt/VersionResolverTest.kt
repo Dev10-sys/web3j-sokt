@@ -12,8 +12,11 @@
  */
 package org.web3j.sokt
 
+import kotlinx.serialization.json.Json
 import org.apache.commons.lang3.SystemUtils
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class VersionResolverTest {
@@ -165,6 +168,18 @@ class VersionResolverTest {
         verifyVersion(">=0.4.0 <0.4.8;", "0.4.2", releases)
         verifyVersion("~0.4.24;", "0.4.26", releases)
         verifyVersion("~0.4.24 >=0.5;", null, releases)
+    }
+
+    @Test
+    fun bundledReleasesFallbackIsReachableViaTheClassClassloader() {
+        val stream = VersionResolver::class.java.getResourceAsStream("/releases.json")
+        assertNotNull(stream, "releases.json must be loadable via the sokt class loader")
+
+        val releases = Json { ignoreUnknownKeys = true }.decodeFromString<List<SolcRelease>>(
+            stream!!.bufferedReader().use { it.readText() },
+        )
+        assertTrue(releases.isNotEmpty())
+        assertTrue(releases.all { it.version.isNotBlank() })
     }
 
     private fun verifyVersion(pragma: String, expectedVersion: String?, releases: List<SolcRelease>) {
