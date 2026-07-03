@@ -6,11 +6,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* NIL
+* Load the bundled `releases.json` fallback via the class's own classloader so the offline fallback works under isolated classloaders (Gradle plugins, OSGi) [#45](https://github.com/LFDT-web3j/web3j-sokt/pull/45)
 
 ### Features
 
 * Replace static compiler release lookup with official Solidity binary index resolution [#13](https://github.com/LFDT-web3j/web3j-sokt/pull/13)
+* Bundle Solidity releases 0.8.31–0.8.35 (with linux-arm64 URLs) in the offline fallback [#45](https://github.com/LFDT-web3j/web3j-sokt/pull/45)
 
 ### BREAKING CHANGES
 
