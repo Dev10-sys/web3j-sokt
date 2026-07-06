@@ -13,8 +13,8 @@
 package org.web3j.sokt
 
 import com.github.zafarkhaja.semver.Version
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.apache.commons.lang3.SystemUtils
 import java.io.BufferedReader
@@ -140,7 +140,11 @@ class VersionResolver(private val directoryPath: String = ".web3j") {
     }
 
     private fun bundledSolcReleases(): List<SolcRelease> {
-        val defaultReleases = ClassLoader.getSystemResource("releases.json").readText()
+        val bundled = VersionResolver::class.java.getResourceAsStream("/releases.json")
+            ?: throw IllegalStateException(
+                "Unable to load the bundled releases.json fallback from the classpath",
+            )
+        val defaultReleases = bundled.bufferedReader().use { it.readText() }
         return json.decodeFromString<List<SolcRelease>>(defaultReleases)
     }
 
